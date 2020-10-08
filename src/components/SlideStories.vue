@@ -1,7 +1,12 @@
 <template>
   <div data-slide="slide" class="slide">
     <div class="slide-items">
-      <img v-for="{ src, alt, id } in items" :src="src" :alt="alt" :key="id" />
+      <img
+        v-for="item in items"
+        :src="item.src"
+        :alt="item.alt"
+        :key="item.id"
+      />
     </div>
     <nav class="slide-nav">
       <div class="slide-thumb"></div>
@@ -22,10 +27,12 @@ export default {
     slide: null
   }),
   mounted() {
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> items', this.items)
     this.slide = document.querySelector(`[data-slide="slide"]`)
+    this.init()
   },
   methods: {
-    activeSlide: function (index) {
+    activeSlide: function(index) {
       this.active = index
       this.items.forEach(item => item.classList.remove('active'))
       this.item[index].classList.add('active')
@@ -33,7 +40,7 @@ export default {
       this.thumbItems[index].classList.add('active')
     },
 
-    prev: function () {
+    prev: function() {
       if (this.active > 0) {
         this.activeSlide(this.active - 1)
       } else {
@@ -41,7 +48,7 @@ export default {
       }
     },
 
-    next: function () {
+    next: function() {
       if (this.active < this.items.length - 1) {
         this.activeSlide(this.active + 1)
       } else {
@@ -49,19 +56,19 @@ export default {
       }
     },
 
-    addNavigation: function () {
+    addNavigation: function() {
       const nextBtn = this.slide.querySelector('.slide-next')
       const prevBtn = this.slide.querySelector('.slide-prev')
       nextBtn.addEventListener('click', this.next)
       prevBtn.addEventListener('click', this.prev)
     },
 
-    addThumbItems: function () {
+    addThumbItems: function() {
       this.items.forEach(() => (this.thumb.innerHTML += `<span></span>`))
       this.thumbItems = Array.from(this.thumb.children)
     },
 
-    init: function () {
+    init: function() {
       this.next = this.next.bind(this)
       this.prev = this.prev.bind(this)
       this.items = this.slide.querySelectorAll('.slide-items > *')
@@ -70,12 +77,11 @@ export default {
       this.activeSlide(0)
       this.addNavigation()
     }
-
   }
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 body {
   background: #1b1d20;
 
@@ -108,7 +114,6 @@ body {
         opacity: 1;
         pointer-events: initial;
       }
-
     }
     .slide-nav {
       grid-area: 1/1;
@@ -140,7 +145,6 @@ body {
           transform: translateX(-100%);
           animation: thumb 5s forwards linear;
         }
-
       }
 
       button {
@@ -149,16 +153,12 @@ body {
         opacity: 0;
       }
     }
-
   }
-
 }
-
 
 @keyframes thumb {
   to {
     transform: initial;
   }
 }
-
 </style>

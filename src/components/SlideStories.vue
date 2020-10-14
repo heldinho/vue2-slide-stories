@@ -1,6 +1,5 @@
 <template>
-  <div data-slide="slide" class="slide">
-    <p style="color: lime;">{{ active }}</p>
+  <div :data-slide="`slide-${slideId}`" class="slide">
     <div class="slide-items">
       <img
         v-for="(img, index) in images"
@@ -20,29 +19,17 @@
 </template>
 
 <script>
-import img1 from '../assets/img/img1.jpg'
-import img2 from '../assets/img/img2.jpg'
-import img3 from '../assets/img/img3.jpg'
-import img4 from '../assets/img/img4.jpg'
-
-const images = [
-  { id: 1, src: img1, alt: 'img1.jpg' },
-  { id: 2, src: img2, alt: 'img2.jpg' },
-  { id: 3, src: img3, alt: 'img3.jpg' },
-  { id: 4, src: img4, alt: 'img4.jpg' }
-]
-
 export default {
+  props: ['slideId', 'images'],
   data: () => ({
     active: 0,
     thumb: null,
     thumbItems: null,
     slide: null,
-    images: images,
     items: null
   }),
   mounted() {
-    this.slide = document.querySelector(`[data-slide="slide"]`)
+    this.slide = document.querySelector(`[data-slide="slide-${this.slideId}"]`)
     this.init()
   },
   methods: {
@@ -52,6 +39,7 @@ export default {
       this.items[index].classList.add('active') // imagens da DOM - add active in items[index]
       this.thumbItems.forEach(item => item.classList.remove('active'))
       this.thumbItems[index].classList.add('active')
+      this.autoSlide()
     },
 
     prev: function() {
@@ -72,6 +60,11 @@ export default {
 
     addThumbItems: function() {
       this.thumbItems = Array.from(this.thumb.children)
+    },
+
+    autoSlide() {
+      clearTimeout(this.timeout)
+      this.timeout = setTimeout(this.next, 5100)
     },
 
     init: function() {

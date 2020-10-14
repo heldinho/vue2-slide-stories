@@ -1,33 +1,47 @@
 <template>
   <div data-slide="slide" class="slide">
+    <p style="color: lime;">{{ active }}</p>
     <div class="slide-items">
       <img
-        v-for="item in items"
-        :src="item.src"
-        :alt="item.alt"
-        :key="item.id"
+        v-for="(img, index) in images"
+        :src="img.src"
+        :alt="img.alt"
+        :key="index"
       />
     </div>
     <nav class="slide-nav">
-      <div class="slide-thumb"></div>
-      <button class="slide-prev">Anterior</button>
-      <button class="slide-next">Próximo</button>
+      <div class="slide-thumb">
+        <span v-for="(span, index) in images" :key="index"></span>
+      </div>
+      <button class="slide-prev" @click="prev()">Anterior</button>
+      <button class="slide-next" @click="next()">Próximo</button>
     </nav>
   </div>
 </template>
 
 <script>
+import img1 from '../assets/img/img1.jpg'
+import img2 from '../assets/img/img2.jpg'
+import img3 from '../assets/img/img3.jpg'
+import img4 from '../assets/img/img4.jpg'
+
+const images = [
+  { id: 1, src: img1, alt: 'img1.jpg' },
+  { id: 2, src: img2, alt: 'img2.jpg' },
+  { id: 3, src: img3, alt: 'img3.jpg' },
+  { id: 4, src: img4, alt: 'img4.jpg' }
+]
+
 export default {
-  props: {
-    items: [Array, Object]
-  },
   data: () => ({
     active: 0,
     thumb: null,
-    slide: null
+    thumbItems: null,
+    slide: null,
+    images: images,
+    items: null
   }),
   mounted() {
-    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> items', this.items)
     this.slide = document.querySelector(`[data-slide="slide"]`)
     this.init()
   },
@@ -35,7 +49,7 @@ export default {
     activeSlide: function(index) {
       this.active = index
       this.items.forEach(item => item.classList.remove('active'))
-      this.item[index].classList.add('active')
+      this.items[index].classList.add('active') // imagens da DOM - add active in items[index]
       this.thumbItems.forEach(item => item.classList.remove('active'))
       this.thumbItems[index].classList.add('active')
     },
@@ -56,26 +70,15 @@ export default {
       }
     },
 
-    addNavigation: function() {
-      const nextBtn = this.slide.querySelector('.slide-next')
-      const prevBtn = this.slide.querySelector('.slide-prev')
-      nextBtn.addEventListener('click', this.next)
-      prevBtn.addEventListener('click', this.prev)
-    },
-
     addThumbItems: function() {
-      this.items.forEach(() => (this.thumb.innerHTML += `<span></span>`))
       this.thumbItems = Array.from(this.thumb.children)
     },
 
     init: function() {
-      this.next = this.next.bind(this)
-      this.prev = this.prev.bind(this)
       this.items = this.slide.querySelectorAll('.slide-items > *')
       this.thumb = this.slide.querySelector('.slide-thumb')
       this.addThumbItems()
       this.activeSlide(0)
-      this.addNavigation()
     }
   }
 }
@@ -116,6 +119,7 @@ body {
       }
     }
     .slide-nav {
+      position: relative;
       grid-area: 1/1;
       z-index: 1;
       display: grid;
@@ -148,9 +152,23 @@ body {
       }
 
       button {
+        width: 100px;
         -webkit-appearance: none;
         -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
         opacity: 0;
+
+        &.slide-prev {
+          position: absolute;
+          left: 0;
+          top: 12px;
+          height: calc(100% - 12px);
+        }
+        &.slide-next {
+          position: absolute;
+          right: 0;
+          top: 12px;
+          height: calc(100% - 12px);
+        }
       }
     }
   }
